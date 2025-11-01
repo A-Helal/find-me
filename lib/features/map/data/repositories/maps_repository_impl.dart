@@ -2,32 +2,15 @@ import 'package:dartz/dartz.dart';
 import 'package:find_me_and_my_theme/core/errors/failures.dart';
 import 'package:find_me_and_my_theme/features/map/data/datasources/maps_remote_datasources.dart';
 import 'package:find_me_and_my_theme/features/map/domain/entiities/place.dart';
-import 'package:find_me_and_my_theme/features/map/domain/entiities/route_info.dart';
-import 'package:find_me_and_my_theme/features/map/domain/repositories/maps_repository.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
+import '../../domain/entiities/route_info.dart';
+import '../../domain/repositories/maps_repository.dart';
 
 class MapsRepositoryImpl implements MapsRepository {
   final MapsRemoteDataSource remoteDataSource;
 
   MapsRepositoryImpl(this.remoteDataSource);
-
-  @override
-  Future<Either<Failure, String>> getAddressFromCoordinates(
-    double lat,
-    double lng,
-  ) async {
-    try {
-      final placeMarks = await placemarkFromCoordinates(lat, lng);
-      if (placeMarks.isNotEmpty) {
-        final place = placeMarks.first;
-        return Right('${place.street}, ${place.locality}, ${place.country}');
-      }
-      return const Left(NetworkFailure('No address found'));
-    } catch (e) {
-      return Left(NetworkFailure(e.toString()));
-    }
-  }
 
   @override
   Future<Either<Failure, Position>> getCurrentLocation() async {
@@ -59,19 +42,6 @@ class MapsRepositoryImpl implements MapsRepository {
   }
 
   @override
-  Future<Either<Failure, RouteInfo>> getDirections(
-    Position origin,
-    Position destination,
-  ) async {
-    try {
-      final route = await remoteDataSource.getDirections(origin, destination);
-      return Right(route);
-    } catch (e) {
-      return Left(NetworkFailure(e.toString()));
-    }
-  }
-
-  @override
   Future<Either<Failure, List<Place>>> searchPlaces(
     String query,
     Position position,
@@ -79,6 +49,67 @@ class MapsRepositoryImpl implements MapsRepository {
     try {
       final places = await remoteDataSource.searchPlaces(query, position);
       return Right(places);
+    } catch (e) {
+      return Left(NetworkFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<Place>>> getPlaceAutocomplete(
+    String query,
+    Position position,
+  ) async {
+    try {
+      final places = await remoteDataSource.getPlaceAutocomplete(
+        query,
+        position,
+      );
+      return Right(places);
+    } catch (e) {
+      return Left(NetworkFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, Place>> getPlaceDetails(String placeId) async {
+    try {
+      final place = await remoteDataSource.getPlaceDetails(placeId);
+      return Right(place);
+    } catch (e) {
+      return Left(NetworkFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, RouteInfo>> getDirections(
+    Position origin,
+    Position destination,
+    String travelMode,
+  ) async {
+    try {
+      final route = await remoteDataSource.getDirections(
+        origin,
+        destination,
+        travelMode,
+      );
+      return Right(route);
+    } catch (e) {
+      return Left(NetworkFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, String>> getAddressFromCoordinates(
+    double lat,
+    double lng,
+  ) async {
+    try {
+      final placemarks = await placemarkFromCoordinates(lat, lng);
+      if (placemarks.isNotEmpty) {
+        final place = placemarks.first;
+        return Right('${place.street}, ${place.locality}, ${place.country}');
+      }
+      return const Left(NetworkFailure('No address found'));
     } catch (e) {
       return Left(NetworkFailure(e.toString()));
     }

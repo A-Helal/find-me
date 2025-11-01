@@ -8,6 +8,9 @@ import 'package:find_me_and_my_theme/features/map/domain/usecases/search_places.
 import 'package:find_me_and_my_theme/features/map/presentation/cubit/maps_cubit.dart';
 import 'package:get_it/get_it.dart';
 
+import '../../features/map/domain/usecases/get_place_autocomplete.dart';
+import '../../features/map/domain/usecases/get_place_details.dart';
+
 final sl = GetIt.instance;
 
 Future<void> initializeDependencies() async {
@@ -33,6 +36,8 @@ Future<void> initializeDependencies() async {
   sl.registerLazySingleton(() => GetCurrentLocation(sl()));
   sl.registerLazySingleton(() => SearchPlaces(sl()));
   sl.registerLazySingleton(() => GetDirections(sl()));
+  sl.registerLazySingleton(() => GetPlaceAutocomplete(sl()));
+  sl.registerLazySingleton(() => GetPlaceDetails(sl()));
 
   // Cubits/Blocs
   sl.registerFactory(
@@ -40,6 +45,8 @@ Future<void> initializeDependencies() async {
       getCurrentLocation: sl(),
       searchPlaces: sl(),
       getDirections: sl(),
+      getPlaceAutocomplete: sl(),
+      getPlaceDetails: sl(),
     ),
   );
 }

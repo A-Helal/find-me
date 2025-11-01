@@ -28,4 +28,13 @@ class PlaceModel extends Place {
           : null,
     );
   }
+
+  factory PlaceModel.fromAutocomplete(Map<String, dynamic> json) {
+    return PlaceModel(
+      id: json['place_id'] ?? '',
+      name: json['structured_formatting']['main_text'] ?? '',
+      address: json['description'] ?? '',
+      location: const LatLng(0, 0),
+    );
+  }
 }

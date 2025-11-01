@@ -12,7 +12,8 @@ class GetDirections {
   Future<Either<Failure, RouteInfo>> call(
     Position origin,
     Position destination,
+    String travelMode,
   ) async {
-    return await mapsRepository.getDirections(origin, destination);
+    return await mapsRepository.getDirections(origin, destination, travelMode);
   }
 }
